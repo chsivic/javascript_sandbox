@@ -1,12 +1,7 @@
 var http = require('http');
 var formidable = require('formidable');
 var parse = require('url').parse;
-var io = require('socket.io')(server); //http://socket.io/get-started/chat/
-
-io.on('connection', function(socket){
-  console.log('a user connected '+io.id);
-  socket.join('sessionId');
-});
+var socket = require('socket.io');
 
 var server = http.createServer(function(req, res){
 
@@ -20,22 +15,32 @@ var server = http.createServer(function(req, res){
   }
 });
 
+var io = socket(server); //http://socket.io/get-started/chat/
+
+io.sockets.on('connection', function(socket){
+  console.log('a user connected ');
+  socket.join('sessionId');
+});
+
+server.on('connection', function(socket){
+  console.log('http connected from '+socket.remoteAddress);
+});
+
 function show(req, res) {
   var html = ''
     + '<form method="post" action="/" enctype="multipart/form-data">'
     + '<p><input type="text" name="name" /></p>'
+    + '<p><input type="text" name="progress" /></p>'
     + '<p><input type="file" name="file" /></p>'
     + '<p><input type="submit" value="Upload" name="upload_button"/></p>'
     + '</form>'
-    + '<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>'
-    + '<script src="http://code.jquery.com/jquery-1.11.1.js"></script>'
-    + "<script>var socket = io(); "
+    + '<script src="/socket.io/socket.io.js"></script>'
+    + "<script>var socket = io('http://localhost'); "
     + "  socket.on('progress', function(progress){"
     + "    console.log(progress);"
     + "    alert(progress)';"
-    + "    $('#name').val(progress+'%');"
+    + "    document.getElementById('progress').value = progress;"
     + "  });"
-    + "    $('#name').val('val test'+'%');"
     + "</script>";
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('Content-Length', Buffer.byteLength(html));
@@ -59,7 +64,7 @@ function upload(req, res) {
   form.on('file', function(name, file){
     console.log('------- file --------');
     console.log('name = '+name);
-    console.log('file = '+file);
+    console.log(file);
   });
 
   form.on('end', function(){
@@ -72,7 +77,7 @@ function upload(req, res) {
     if (percent != last_percent && percent - last_percent >= 5) {
       last_percent = percent;
       console.log(percent);
-      io.sockets.in('sessionId').emit('progress', percent);
+      io.sockets.emit('progress',percent);
     }
   });
 

@@ -1,0 +1,7 @@
+Before trying out the application, create some text files in the text directory you cre- ated earlier. After you’ve created these files, open a command line and enter the fol- lowing commands to change to the application directory and execute the script:
+        cd word_count
+        node word_count.js
+Now that you’ve learned how serial and parallel flow control work under the hood, let’s look at how to leverage community-created tools that allow you to easily benefit from flow control in your applications, without having to implement it yourself.
+3.3.4 Leveraging community tools
+Many community add-ons provide convenient flow-control tools. Some popular add- ons include Nimble, Step, and Seq. Although each of these is worth checking out, we’ll use Nimble again for another example.
+COMMUNITY ADD-ONS FOR FLOW CONTROL For more information about com- munity add-ons for flow control, see the article “Virtual Panel: How to Survive Asynchronous Programming in JavaScript” by Werner Schuster and Dio Syno- dinos on InfoQ: http://mng.bz/wKnV.
